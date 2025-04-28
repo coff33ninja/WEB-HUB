@@ -1,0 +1,145 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 10% 97%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --primary: 244 75% 60%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 252 100% 69%;
+    --accent-foreground: 222 47% 11%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 222 84% 70%;
+
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 47% 13%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 252 100% 69%;
+    --primary-foreground: 222 47% 11%;
+
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 244 75% 60%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 213 27% 84%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+.module-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .module-grid {
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  }
+}
+
+.module-card {
+  @apply bg-card rounded-lg border border-border shadow-sm transition-all duration-200;
+}
+
+.module-card:hover {
+  @apply shadow-md border-primary/20;
+}
+
+.dropzone {
+  @apply border-2 border-dashed border-border rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer transition-colors;
+}
+
+.dropzone:hover {
+  @apply bg-muted/50 border-primary/30;
+}
+
+.dropzone.active {
+  @apply border-accent bg-accent/5;
+}
+
+.ai-message {
+  @apply bg-secondary rounded-lg p-3 my-2;
+}
+
+.user-message {
+  @apply bg-primary/10 rounded-lg p-3 my-2;
+}
+
+/* Drag and drop styles */
+.module-dragging {
+  @apply opacity-50 border-2 border-dashed border-primary;
+}
+
+.module-drop-target {
+  @apply border-2 border-dashed border-primary bg-primary/5;
+}
+
+.resizable-handle {
+  @apply flex items-center justify-center bg-border hover:bg-primary/30 transition-colors;
+}
+
+.layout-edit-controls {
+  @apply fixed bottom-4 right-4 bg-background border rounded-lg shadow-lg p-2 z-50;
+}
+
+.edit-mode .module-card {
+  @apply cursor-move border-2 border-dashed;
+}
+
+.edit-mode .module-card::before {
+  content: '⋮⋮';
+  @apply absolute top-1 left-1 text-muted-foreground opacity-50;
+}
