@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Upload, FileUp } from "lucide-react";
 import {
@@ -12,53 +11,64 @@ import { useToast } from "@/hooks/use-toast";
 
 export function UploadModule() {
   const [isDragging, setIsDragging] = useState(false);
-  const [uploadedModules, setUploadedModules] = useState([
-    { name: "currency_converter.py", type: "python", status: "active" },
-    { name: "stock_tracker.json", type: "json", status: "inactive" },
-  ]);
+  const [uploadedModules, setUploadedModules] = useState(() => {
+    const stored = localStorage.getItem('uploadedModules');
+    return stored
+      ? JSON.parse(stored)
+      : [
+          { name: "currency_converter.py", type: "python", status: "active" },
+          { name: "stock_tracker.json", type: "json", status: "inactive" },
+        ];
+  });
   const { toast } = useToast();
-  
+
+  useEffect(() => {
+    localStorage.setItem('uploadedModules', JSON.stringify(uploadedModules));
+  }, [uploadedModules]);
+
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(true);
   };
-  
+
   const handleDragLeave = () => {
     setIsDragging(false);
   };
-  
+
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
-    
-    // Handle file upload logic
     const files = Array.from(e.dataTransfer.files);
     if (files.length) {
-      // In a real app, we'd process the files here
       toast({
         title: "Module uploaded",
         description: `${files[0].name} has been added to your modules.`,
       });
-      
-      // Simulate adding a new module
-      setUploadedModules([
-        ...uploadedModules,
-        { 
-          name: files[0].name, 
+      setUploadedModules(prev => [
+        ...prev,
+        {
+          name: files[0].name,
           type: files[0].name.endsWith('.py') ? 'python' : 'json',
-          status: 'pending'
-        }
+          status: 'inactive',
+        },
       ]);
     }
   };
-  
+
+  const handleToggle = (index: number) => {
+    setUploadedModules(prev => {
+      const updated = [...prev];
+      updated[index].status = updated[index].status === 'active' ? 'inactive' : 'active';
+      return updated;
+    });
+  };
+
   return (
     <Tabs defaultValue="upload">
       <TabsList className="grid grid-cols-2 mb-4">
         <TabsTrigger value="upload">Upload</TabsTrigger>
         <TabsTrigger value="installed">Installed</TabsTrigger>
       </TabsList>
-      
       <TabsContent value="upload">
         <div
           className={`dropzone h-[150px] ${isDragging ? 'active' : ''}`}
@@ -75,7 +85,6 @@ export function UploadModule() {
           </Button>
         </div>
       </TabsContent>
-      
       <TabsContent value="installed">
         <div className="space-y-2">
           {uploadedModules.map((module, index) => (
@@ -85,7 +94,7 @@ export function UploadModule() {
                 <div className="text-xs text-muted-foreground capitalize">{module.type}</div>
               </div>
               <div>
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="sm" onClick={() => handleToggle(index)}>
                   {module.status === "active" ? "Disable" : "Enable"}
                 </Button>
               </div>
